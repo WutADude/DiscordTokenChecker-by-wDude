@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
@@ -39,6 +40,8 @@ namespace DiscordTokenChecker_by_wDude
         public int numOfDoubles; // Кол-во удалённых дублей токенов
 
         public string workedProxy;
+
+        
 
         public void GetTokensFromFile() //Импорт токенов из текстового файла
         {
@@ -91,6 +94,18 @@ namespace DiscordTokenChecker_by_wDude
             {
                 MessageBox.Show($"При импорте токенов произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public void SaveAllTokens() // Сохранить все токены из списка
+        {
+            if (TokenList.Count > 0)
+            {
+                string allTokensFile = $"[{DateTime.Now.Hour}.{DateTime.Now.Minute}] Не проверенные токены (ВСЕ).txt";
+                File.WriteAllLines(allTokensFile, TokenList);
+                Process.Start(allTokensFile);
+            }
+            else
+                MessageBox.Show("Не удалось сохранить все токены, так как список токенов пуст. Пожалуйста импортируйте токены!", "Не удалось сохранить", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         public void GetProxysFromFile()

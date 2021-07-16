@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using xNet;
@@ -11,6 +12,9 @@ namespace DiscordTokenChecker_by_wDude
     {
         //Подключение класса функций
         Functions Functions = new Functions();
+
+        //Подсказки для пользователей
+        ToolTip saveTokensTip = new ToolTip();
 
         // Константы для премещения формы при зажатии мыши
         public const int WM_NCLBUTTONDOWN = 0xA1; // Событие при нажатии левой кнопки мыши
@@ -32,6 +36,8 @@ namespace DiscordTokenChecker_by_wDude
         private void Form1_Load(object sender, EventArgs e) // Инструкции при загрузке формы
         {
             Functions.CheckStartPath(); // Проверка на папку, из которой запускается программа
+            saveTokensTip.SetToolTip(saveAllTokensButton, "При нажатии будут сохранены все импортированные в программу токены, с удалёнными дублями.\n" +
+                "Текстовый документ с токенами появится в папке с программой.");
         }
 
         private void button1_Click(object sender, EventArgs e) // Закрытие формы по нажатию кнопки
@@ -161,6 +167,11 @@ namespace DiscordTokenChecker_by_wDude
         private void label16_Click(object sender, EventArgs e)
         {
             Process.Start("https://lolz.guru/wdude/");
+        }
+
+        private void saveAllTokensButton_Click(object sender, EventArgs e)
+        {
+            Functions.SaveAllTokens();
         }
     }
 }
