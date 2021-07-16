@@ -34,6 +34,7 @@ namespace DiscordTokenChecker_by_wDude
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label16 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -69,8 +70,9 @@ namespace DiscordTokenChecker_by_wDude
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.nopaymentTokensLabel = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.importTokensFromFileRadio = new System.Windows.Forms.RadioButton();
+            this.importTokensFromPathRadio = new System.Windows.Forms.RadioButton();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -126,6 +128,22 @@ namespace DiscordTokenChecker_by_wDude
             this.panel1.TabIndex = 2;
             this.panel1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panel1_MouseMove);
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(166)))), ((int)(((byte)(168)))), ((int)(((byte)(170)))));
+            this.label16.Location = new System.Drawing.Point(153, 8);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(46, 13);
+            this.label16.TabIndex = 3;
+            this.label16.Text = "wDude";
+            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.label16.Click += new System.EventHandler(this.label16_Click);
+            this.label16.MouseEnter += new System.EventHandler(this.label16_MouseEnter);
+            this.label16.MouseLeave += new System.EventHandler(this.label16_MouseLeave);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -150,7 +168,7 @@ namespace DiscordTokenChecker_by_wDude
             this.button3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(239)))), ((int)(((byte)(255)))), ((int)(((byte)(250)))));
             this.button3.Location = new System.Drawing.Point(17, 43);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(310, 32);
+            this.button3.Size = new System.Drawing.Size(227, 32);
             this.button3.TabIndex = 4;
             this.button3.Text = "Импортированно токенов: 0";
             this.button3.UseVisualStyleBackColor = false;
@@ -201,6 +219,8 @@ namespace DiscordTokenChecker_by_wDude
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(41)))), ((int)(((byte)(43)))), ((int)(((byte)(47)))));
+            this.panel2.Controls.Add(this.importTokensFromPathRadio);
+            this.panel2.Controls.Add(this.importTokensFromFileRadio);
             this.panel2.Controls.Add(this.deletedDoublesLabel);
             this.panel2.Controls.Add(this.threadsOnWork);
             this.panel2.Controls.Add(this.label13);
@@ -581,33 +601,49 @@ namespace DiscordTokenChecker_by_wDude
             this.label17.Text = "Без методов оплаты:";
             this.label17.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label16.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(166)))), ((int)(((byte)(168)))), ((int)(((byte)(170)))));
-            this.label16.Location = new System.Drawing.Point(153, 8);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(46, 13);
-            this.label16.TabIndex = 3;
-            this.label16.Text = "wDude";
-            this.label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.label16.Click += new System.EventHandler(this.label16_Click);
-            this.label16.MouseEnter += new System.EventHandler(this.label16_MouseEnter);
-            this.label16.MouseLeave += new System.EventHandler(this.label16_MouseLeave);
-            // 
             // label18
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label18.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(74)))), ((int)(((byte)(57)))), ((int)(((byte)(93)))));
-            this.label18.Location = new System.Drawing.Point(65, 252);
+            this.label18.Location = new System.Drawing.Point(63, 251);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(221, 13);
             this.label18.TabIndex = 32;
             this.label18.Text = "Cпециально для форума LOLZTEAM";
             this.label18.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // importTokensFromFileRadio
+            // 
+            this.importTokensFromFileRadio.AutoSize = true;
+            this.importTokensFromFileRadio.Checked = true;
+            this.importTokensFromFileRadio.FlatAppearance.BorderSize = 0;
+            this.importTokensFromFileRadio.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(98)))), ((int)(((byte)(105)))));
+            this.importTokensFromFileRadio.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(98)))), ((int)(((byte)(105)))));
+            this.importTokensFromFileRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.importTokensFromFileRadio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(166)))), ((int)(((byte)(168)))), ((int)(((byte)(170)))));
+            this.importTokensFromFileRadio.Location = new System.Drawing.Point(250, 43);
+            this.importTokensFromFileRadio.Name = "importTokensFromFileRadio";
+            this.importTokensFromFileRadio.Size = new System.Drawing.Size(82, 17);
+            this.importTokensFromFileRadio.TabIndex = 34;
+            this.importTokensFromFileRadio.Text = "Из файла";
+            this.importTokensFromFileRadio.UseVisualStyleBackColor = true;
+            // 
+            // importTokensFromPathRadio
+            // 
+            this.importTokensFromPathRadio.AutoSize = true;
+            this.importTokensFromPathRadio.FlatAppearance.BorderSize = 0;
+            this.importTokensFromPathRadio.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(98)))), ((int)(((byte)(105)))));
+            this.importTokensFromPathRadio.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(93)))), ((int)(((byte)(98)))), ((int)(((byte)(105)))));
+            this.importTokensFromPathRadio.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.importTokensFromPathRadio.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(166)))), ((int)(((byte)(168)))), ((int)(((byte)(170)))));
+            this.importTokensFromPathRadio.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.importTokensFromPathRadio.Location = new System.Drawing.Point(250, 58);
+            this.importTokensFromPathRadio.Name = "importTokensFromPathRadio";
+            this.importTokensFromPathRadio.Size = new System.Drawing.Size(80, 17);
+            this.importTokensFromPathRadio.TabIndex = 35;
+            this.importTokensFromPathRadio.Text = "Из папки";
+            this.importTokensFromPathRadio.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -698,6 +734,8 @@ namespace DiscordTokenChecker_by_wDude
         private System.Windows.Forms.Label deletedDoublesLabel;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.RadioButton importTokensFromPathRadio;
+        private System.Windows.Forms.RadioButton importTokensFromFileRadio;
     }
 }
 

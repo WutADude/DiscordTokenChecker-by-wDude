@@ -6,6 +6,7 @@ using xNet;
 
 namespace DiscordTokenChecker_by_wDude
 {
+    // Некоторые переменные или методы могут начинаться с нижнего подчёркивания (например: _BlahBlah). Это не чужой код, также мой. Просто мне стало в падлу везде ставить нижнее подчёркивание :D
     public partial class Form1 : Form
     {
         //Подключение класса функций
@@ -56,7 +57,10 @@ namespace DiscordTokenChecker_by_wDude
         {
             if (!Functions.TokensImported)
             {
-                Functions.GetTokensFromFile();
+                if (importTokensFromFileRadio.Checked)
+                    Functions.GetTokensFromFile();
+                else
+                    Functions.GetTokensFromPaths();
             }
             else if (Functions.ThreadsList.Count > 0)
             {
