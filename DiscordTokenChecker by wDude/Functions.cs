@@ -6,9 +6,9 @@ using System.Drawing;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using xNet;
-
 namespace DiscordTokenChecker_by_wDude
 {
     // Некоторые переменные или методы могут начинаться с нижнего подчёркивания (например: _BlahBlah). Это не чужой код, также мой. Просто мне стало в падлу везде ставить нижнее подчёркивание :D
@@ -43,8 +43,9 @@ namespace DiscordTokenChecker_by_wDude
 
         
 
-        public void GetTokensFromFile() //Импорт токенов из текстового файла
+        public async void GetTokensFromFile() //Импорт токенов из текстового файла
         {
+            MainForm.mainStartButton.Enabled = false;
             try //Если будут ошибки, то программа не закроется
             {
                 using (FileDialog tokenDialog = new OpenFileDialog()) //Открываю окно, в котором нужно выбрать файл
@@ -55,37 +56,40 @@ namespace DiscordTokenChecker_by_wDude
                     DialogResult dialogResult = tokenDialog.ShowDialog();
                     if (dialogResult == DialogResult.OK && tokenDialog.FileName.Length > 0) //Если файл выбран, идём дальше
                     {
-                        string[] tokens = File.ReadAllLines(tokenDialog.FileName); //Читаем строки из файла и заносим в массив
-                        numOfDoubles = 0;
-                        if (tokens.Length > 0) //Если число элементов массива больше 0, то идём дальше
+                        await Task.Run(() =>
                         {
-                            foreach (var token in tokens) //Проходимся по каждому элементу
+                            string[] tokens = File.ReadAllLines(tokenDialog.FileName); //Читаем строки из файла и заносим в массив
+                            numOfDoubles = 0;
+                            if (tokens.Length > 0) //Если число элементов массива больше 0, то идём дальше
                             {
-                                if (!TokenList.Contains(token) && token != null) //Проверка на дубли
+                                foreach (var token in tokens) //Проходимся по каждому элементу
                                 {
-                                    TokenList.Enqueue(token);
+                                    if (!TokenList.Contains(token) && token != null) //Проверка на дубли
+                                    {
+                                        TokenList.Enqueue(token);
+                                    }
+                                    else
+                                        numOfDoubles++;
                                 }
-                                else
-                                    numOfDoubles++;
+                                if (TokenList.Count > 0) //После, если число токенов в списке больше 0 то перекрашиваю кнопку и изменяю булевую функцию, для изменения функции кнопки.
+                                {
+                                    MainForm.mainStartButton.Text = $"Импортированно токенов: {TokenList.Count}"; //Изменяю текст кнопки
+                                    MainForm.leftTokensLabel.Text = TokenList.Count.ToString(); //изменяю текст лебла кол-ва оставшихся токенов
+                                    MainForm.mainStartButton.BackColor = Color.FromArgb(88, 101, 242);
+                                    MainForm.mainStartButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(71, 82, 196);
+                                    MainForm.mainStartButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 82, 196);
+                                    TokensImported = true; //Изменяю булевую если всё ок
+                                }
+                                else //Если токенов в списке не больше 0, то ничего не делаю и булевая остаётся ложью
+                                {
+                                    TokensImported = false;
+                                }
                             }
-                            if (TokenList.Count > 0) //После, если число токенов в списке больше 0 то перекрашиваю кнопку и изменяю булевую функцию, для изменения функции кнопки.
+                            else //Кастомная ошибка на случай отсутствия строк в файле
                             {
-                                MainForm.button3.Text = $"Импортированно токенов: {TokenList.Count}"; //Изменяю текст кнопки
-                                MainForm.leftTokensLabel.Text = TokenList.Count.ToString(); //изменяю текст лебла кол-ва оставшихся токенов
-                                MainForm.button3.BackColor = Color.FromArgb(88, 101, 242);
-                                MainForm.button3.FlatAppearance.MouseDownBackColor = Color.FromArgb(71, 82, 196);
-                                MainForm.button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 82, 196);
-                                TokensImported = true; //Изменяю булевую если всё ок
+                                MessageBox.Show("При импорте токенов произошла ошибка, возможно в текстовом документе небыло токенов...", "Ошибка при импорте токенов", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
-                            else //Если токенов в списке не больше 0, то ничего не делаю и булевая остаётся ложью
-                            {
-                                TokensImported = false;
-                            }
-                        }
-                        else //Кастомная ошибка на случай отсутствия строк в файле
-                        {
-                            MessageBox.Show("При импорте токенов произошла ошибка, возможно в текстовом документе небыло токенов...", "Ошибка при импорте токенов", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
+                        });
                     }
                     tokenDialog.Dispose();
                 }
@@ -94,6 +98,62 @@ namespace DiscordTokenChecker_by_wDude
             {
                 MessageBox.Show($"При импорте токенов произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            MainForm.mainStartButton.Enabled = true;
+        }
+
+        public async void GetTokensFromPaths() // Импорт токенов из выбранной пользователем папки при помощи регулярки
+        {
+            MainForm.mainStartButton.Enabled = false;
+            try //Если будут ошибки, то программа не закроется
+            {
+                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) // Определяю
+                {
+                    folderDialog.Description = "Выберите папку для поиска токенов...";
+                    DialogResult dialogResult = folderDialog.ShowDialog(); // Открываю окно выбора
+                    folderDialog.Dispose(); // Освобождаю ресурсы
+                    if (dialogResult == DialogResult.OK && folderDialog.SelectedPath != null) // Проверяю на выбор папки и нажатие окей
+                    {
+                        await Task.Run(() =>
+                        {
+                            string[] filesInDirectory = Directory.GetFiles(folderDialog.SelectedPath, "*.txt", SearchOption.AllDirectories); // Союздаю массив файлов в папке и её подпапках
+                            foreach (var file in filesInDirectory) // Прохожусь по каждому файлу 
+                            {
+                                if (File.ReadAllText(file) != null) // Проверка на пустоту файла, если не пустой иду дальше
+                                {
+                                    foreach (string token in File.ReadAllLines(file)) // Прохожусь по каждой строке файла
+                                    {
+                                        if (Regex.IsMatch(token, tokenPattern, RegexOptions.Compiled)) // Если находится соответствие паттерну регулярки, то иду дальше
+                                        {
+                                            if (!TokenList.Contains(Regex.Match(token, tokenPattern).Value)) // Проверяю на наличие найденного токена в листах, дабы избежать дублей
+                                                TokenList.Enqueue(Regex.Match(token, tokenPattern).Value); // Добавляю токен
+                                            else
+                                                numOfDoubles++; // Увеличиваю счётчик дублей если такой токен уже есть
+                                        }
+                                    }
+                                    if (TokenList.Count > 0) //После, если число токенов в списке больше 0 то перекрашиваю кнопку и изменяю булевую функцию, для изменения функции кнопки.
+                                    {
+                                        MainForm.mainStartButton.Text = $"Импортированно токенов: {TokenList.Count}"; //Изменяю текст кнопки
+                                        MainForm.leftTokensLabel.Text = TokenList.Count.ToString(); //изменяю текст лебла кол-ва оставшихся токенов
+                                        MainForm.mainStartButton.BackColor = Color.FromArgb(88, 101, 242);
+                                        MainForm.mainStartButton.FlatAppearance.MouseDownBackColor = Color.FromArgb(71, 82, 196);
+                                        MainForm.mainStartButton.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 82, 196);
+                                        TokensImported = true; //Изменяю булевую если всё ок
+                                    }
+                                    else //Если токенов в списке не больше 0, то ничего не делаю и булевая остаётся ложью
+                                    {
+                                        TokensImported = false;
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            catch (Exception ex) //Отлавливаю ошибку и вывожу пользователю
+            {
+                MessageBox.Show($"При парсе и импорте токенов произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            MainForm.mainStartButton.Enabled = true;
         }
 
         public void SaveAllTokens() // Сохранить все токены из списка
@@ -180,7 +240,7 @@ namespace DiscordTokenChecker_by_wDude
                     ThreadsList.Remove(ThreadsList[0]);
                 }
             }
-            MainForm.button3.Text = $"Импортированно токенов: {TokenList.Count}";
+            MainForm.mainStartButton.Text = $"Импортированно токенов: {TokenList.Count}";
             if (TokenList.Count == 0)
                 TokensImported = false;
             SaveTokens();
@@ -304,7 +364,7 @@ namespace DiscordTokenChecker_by_wDude
 
         public void CheckStartPath() // Метод, который проверяет в какой папке была запущена программа, если с рабочего стола то предлагает совершить некоторые действия и закрывается
         {
-            if (Application.ExecutablePath.Replace(Application.ProductName + ".exe", "").ToLower().EndsWith(@"desktop\"))
+            if (Directory.GetCurrentDirectory().ToLower().EndsWith(@"desktop"))
             {
                 MessageBox.Show("Доброго времени суток!\n" +
                     "Тут небольшая проблемка, которую очень легко решить!\n" +
@@ -313,56 +373,10 @@ namespace DiscordTokenChecker_by_wDude
                     "Спасибо за внимание.", "Важная информация", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Application.Exit();
             }
+            else
+                MainForm.resultsAppStartPathLabel.Text = Directory.GetCurrentDirectory();
+
         }
 
-        public void GetTokensFromPaths() // Импорт токенов из выбранной пользователем папки при помощи регулярки
-        {
-            try //Если будут ошибки, то программа не закроется
-            {
-                using (FolderBrowserDialog folderDialog = new FolderBrowserDialog()) // Определяю
-                {
-                    folderDialog.Description = "Выберите папку для поиска токенов...";
-                    DialogResult dialogResult = folderDialog.ShowDialog(); // Открываю окно выбора
-                    folderDialog.Dispose(); // Освобождаю ресурсы
-                    if (dialogResult == DialogResult.OK && folderDialog.SelectedPath != null) // Проверяю на выбор папки и нажатие окей
-                    {
-                        string[] filesInDirectory = Directory.GetFiles(folderDialog.SelectedPath, "*.txt", SearchOption.AllDirectories); // Союздаю массив файлов в папке и её подпапках
-                        foreach (var file in filesInDirectory) // Прохожусь по каждому файлу 
-                        {
-                            if (File.ReadAllText(file) != null) // Проверка на пустоту файла, если не пустой иду дальше
-                            {
-                                foreach (string token in File.ReadAllLines(file)) // Прохожусь по каждой строке файла
-                                {
-                                    if (Regex.IsMatch(token, tokenPattern, RegexOptions.Compiled)) // Если находится соответствие паттерну регулярки, то иду дальше
-                                    {
-                                        if (!TokenList.Contains(Regex.Match(token, tokenPattern).Value)) // Проверяю на наличие найденного токена в листах, дабы избежать дублей
-                                            TokenList.Enqueue(Regex.Match(token, tokenPattern).Value); // Добавляю токен
-                                        else
-                                            numOfDoubles++; // Увеличиваю счётчик дублей если такой токен уже есть
-                                    }
-                                }
-                                if (TokenList.Count > 0) //После, если число токенов в списке больше 0 то перекрашиваю кнопку и изменяю булевую функцию, для изменения функции кнопки.
-                                {
-                                    MainForm.button3.Text = $"Импортированно токенов: {TokenList.Count}"; //Изменяю текст кнопки
-                                    MainForm.leftTokensLabel.Text = TokenList.Count.ToString(); //изменяю текст лебла кол-ва оставшихся токенов
-                                    MainForm.button3.BackColor = Color.FromArgb(88, 101, 242);
-                                    MainForm.button3.FlatAppearance.MouseDownBackColor = Color.FromArgb(71, 82, 196);
-                                    MainForm.button3.FlatAppearance.MouseOverBackColor = Color.FromArgb(71, 82, 196);
-                                    TokensImported = true; //Изменяю булевую если всё ок
-                                }
-                                else //Если токенов в списке не больше 0, то ничего не делаю и булевая остаётся ложью
-                                {
-                                    TokensImported = false;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex) //Отлавливаю ошибку и вывожу пользователю
-            {
-                MessageBox.Show($"При парсе и импорте токенов произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
     }
 }

@@ -14,7 +14,8 @@ namespace DiscordTokenChecker_by_wDude
         Functions Functions = new Functions();
 
         //Подсказки для пользователей
-        ToolTip saveTokensTip = new ToolTip();
+        ToolTip _saveTokensTip = new ToolTip();
+        ToolTip _resultsPath = new ToolTip();
 
         // Константы для премещения формы при зажатии мыши
         public const int WM_NCLBUTTONDOWN = 0xA1; // Событие при нажатии левой кнопки мыши
@@ -36,8 +37,9 @@ namespace DiscordTokenChecker_by_wDude
         private void Form1_Load(object sender, EventArgs e) // Инструкции при загрузке формы
         {
             Functions.CheckStartPath(); // Проверка на папку, из которой запускается программа
-            saveTokensTip.SetToolTip(saveAllTokensButton, "При нажатии будут сохранены все импортированные в программу токены, с удалёнными дублями.\n" +
+            _saveTokensTip.SetToolTip(saveAllTokensButton, "При нажатии будут сохранены все импортированные в программу токены, с удалёнными дублями.\n" +
                 "Текстовый документ с токенами появится в папке с программой.");
+            _resultsPath.SetToolTip(resultsAppStartPathLabel, "Результаты сохраняются в папке, из которой был произведён запуск программы!");
         }
 
         private void button1_Click(object sender, EventArgs e) // Закрытие формы по нажатию кнопки
@@ -82,17 +84,17 @@ namespace DiscordTokenChecker_by_wDude
         private void button3_MouseEnter(object sender, EventArgs e)
         {
             if (Functions.TokensImported && Functions.ThreadsList.Count > 0)
-                button3.Text = "Остановить";
+                mainStartButton.Text = "Остановить";
             else if (Functions.TokensImported) 
-                button3.Text = "Начать проверку токенов";
+                mainStartButton.Text = "Начать проверку токенов";
         }
 
         private void button3_MouseLeave(object sender, EventArgs e)
         {
             if (Functions.TokensImported && Functions.ThreadsList.Count > 0)
-                button3.Text = "В процессе...";
+                mainStartButton.Text = "В процессе...";
             else
-                button3.Text = $"Импортированно токенов: {Functions.TokenList.Count}";
+                mainStartButton.Text = $"Импортированно токенов: {Functions.TokenList.Count}";
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -148,6 +150,9 @@ namespace DiscordTokenChecker_by_wDude
             nitro_classicTokensLabel.Text = Functions.WithClassicNitroTokens.Count.ToString();
             threadsOnWork.Text = Functions.ThreadsList.Count.ToString();
             deletedDoublesLabel.Text = Functions.numOfDoubles.ToString();
+            proxyStatusLabel.Text = Functions.ProxyList.Count > 0 ? "✔" : "✖";
+            proxyStatusLabel.ForeColor = Functions.ProxyList.Count > 0 ? Color.FromArgb(114, 137, 218) : Color.FromArgb(237, 66, 69);
+            usingProxyLabel.Text = Functions.ProxyList.Count > 0 ? Functions.workedProxy : "Не используется";
             if (Functions.ThreadsList.Count == 0)
                 panel3.Enabled = true;
             if (Functions.ProxysImported)
@@ -172,6 +177,16 @@ namespace DiscordTokenChecker_by_wDude
         private void saveAllTokensButton_Click(object sender, EventArgs e)
         {
             Functions.SaveAllTokens();
+        }
+
+        private void label18_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://lolz.guru");
+        }
+
+        private void resultsAppStartPathLabel_Click(object sender, EventArgs e)
+        {
+            Process.Start("explorer.exe", resultsAppStartPathLabel.Text);
         }
     }
 }
